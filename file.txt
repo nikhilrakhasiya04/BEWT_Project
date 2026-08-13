@@ -1,0 +1,13 @@
+//register
+{
+    "name": "Nikhil Rakhasiya",
+    "email": "nikhil.rakhasiya@gmail.com",
+    "password": "nikhil123",
+    "role": "Administrator"
+}
+
+//login
+{
+    "email": "nikhil.rakhasiya@gmail.com",
+    "password": "nikhil123"
+}
