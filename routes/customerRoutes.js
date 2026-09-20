@@ -1,17 +1,19 @@
 const express = require("express");
 const controller = require("../controllers/customerController");
-const { authenticate } = require("../middlewares/authMiddleware");
+const { authenticate, authorize } = require("../middlewares/authMiddleware");
+const { validateCustomer, validateUpdateCustomer } = require("../validations/validation");
 
 const router = express.Router();
 
-router.get("/", authenticate, controller.getAll);
+router.use(authenticate);
 
-router.get("/:id", authenticate, controller.getById);
+// View Only permitted for Receptionist & Administrator
+router.get("/", authorize("Administrator", "Receptionist"), controller.getAll);
+router.get("/:id", authorize("Administrator", "Receptionist"), controller.getById);
 
-router.post("/", authenticate, controller.create);
-
-router.put("/:id", authenticate, controller.update);
-
-router.delete("/:id", authenticate, controller.delete);
+// Modification restricted strictly to Administrator (per Section 4 RBAC matrix)
+router.post("/", authorize("Administrator"), validateCustomer, controller.create);
+router.put("/:id", authorize("Administrator"), validateUpdateCustomer, controller.update);
+router.delete("/:id", authorize("Administrator"), controller.delete);
 
 module.exports = router;

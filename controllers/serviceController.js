@@ -1,9 +1,12 @@
-const service = require("../services/serviceService");
+const serviceService = require("../services/serviceService");
 
 exports.getAll = async (req, res, next) => {
     try {
-        const data = await service.getAll();
-        res.json({ success: true, data });
+        const data = await serviceService.getAll();
+        res.status(200).json({
+            success: true,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -11,8 +14,11 @@ exports.getAll = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
     try {
-        const data = await service.getById(req.params.id);
-        res.json({ success: true, data });
+        const data = await serviceService.getById(req.params.id);
+        res.status(200).json({
+            success: true,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -20,11 +26,10 @@ exports.getById = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const data = await service.create(req.body);
-
+        const data = await serviceService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Service created successfully",
+            message: "Service item created successfully",
             data
         });
     } catch (error) {
@@ -34,14 +39,10 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
-        const data = await service.update(
-            req.params.id,
-            req.body
-        );
-
-        res.json({
+        const data = await serviceService.update(req.params.id, req.body);
+        res.status(200).json({
             success: true,
-            message: "Service updated successfully",
+            message: "Service item updated successfully",
             data
         });
     } catch (error) {
@@ -51,11 +52,10 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        await service.delete(req.params.id);
-
-        res.json({
+        await serviceService.delete(req.params.id);
+        res.status(200).json({
             success: true,
-            message: "Service deleted successfully"
+            message: "Service item deleted successfully"
         });
     } catch (error) {
         next(error);

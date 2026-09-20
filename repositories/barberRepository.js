@@ -1,10 +1,17 @@
 const Barber = require("../models/Barber");
 
-exports.findAll = () =>
-    Barber.find().populate("user_id", "-password");
+exports.findAll = (filter = {}) =>
+    Barber.find(filter)
+        .populate("user_id", "name email phone role status")
+        .sort({ joining_date: -1 });
 
 exports.findById = (id) =>
-    Barber.findById(id).populate("user_id", "-password");
+    Barber.findById(id)
+        .populate("user_id", "name email phone role status");
+
+exports.findByUserId = (userId) =>
+    Barber.findOne({ user_id: userId })
+        .populate("user_id", "name email phone role status");
 
 exports.create = (data) =>
     Barber.create(data);
@@ -14,10 +21,10 @@ exports.update = (id, data) =>
         id,
         data,
         {
-            new: true,
+            returnDocument: "after",
             runValidators: true
         }
-    ).populate("user_id", "-password");
+    ).populate("user_id", "name email phone role status");
 
 exports.remove = (id) =>
     Barber.findByIdAndDelete(id);

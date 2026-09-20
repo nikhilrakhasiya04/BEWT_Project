@@ -1,8 +1,10 @@
 const Service = require("../models/Service");
 
-exports.findAll = () => Service.find();
+exports.findAll = (filter = {}) => Service.find(filter).sort({ price: 1 });
 
 exports.findById = (id) => Service.findById(id);
+
+exports.findByName = (service_name) => Service.findOne({ service_name: { $regex: new RegExp(`^${service_name}$`, "i") } });
 
 exports.create = (data) => Service.create(data);
 
@@ -11,7 +13,7 @@ exports.update = (id, data) =>
         id,
         data,
         {
-            new: true,
+            returnDocument: "after",
             runValidators: true
         }
     );

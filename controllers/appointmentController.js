@@ -1,9 +1,13 @@
-const service = require("../services/appointmentService");
+const appointmentService = require("../services/appointmentService");
 
 exports.getAll = async (req, res, next) => {
     try {
-        const data = await service.getAll();
-        res.json({ success: true, data });
+        const data = await appointmentService.getAll(req.query);
+        res.status(200).json({
+            success: true,
+            count: data.length,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -11,8 +15,11 @@ exports.getAll = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
     try {
-        const data = await service.getById(req.params.id);
-        res.json({ success: true, data });
+        const data = await appointmentService.getById(req.params.id);
+        res.status(200).json({
+            success: true,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -20,11 +27,10 @@ exports.getById = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const data = await service.create(req.body);
-
+        const data = await appointmentService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Appointment created successfully",
+            message: "Appointment booked successfully",
             data
         });
     } catch (error) {
@@ -34,12 +40,8 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
-        const data = await service.update(
-            req.params.id,
-            req.body
-        );
-
-        res.json({
+        const data = await appointmentService.update(req.params.id, req.body);
+        res.status(200).json({
             success: true,
             message: "Appointment updated successfully",
             data
@@ -51,9 +53,8 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        await service.delete(req.params.id);
-
-        res.json({
+        await appointmentService.delete(req.params.id);
+        res.status(200).json({
             success: true,
             message: "Appointment deleted successfully"
         });

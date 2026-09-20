@@ -1,9 +1,20 @@
-const service = require("../services/barberService");
+const barberService = require("../services/barberService");
 
 exports.getAll = async (req, res, next) => {
     try {
-        const data = await service.getAll();
-        res.json({ success: true, data });
+        const filter = {};
+        if (req.query.status) {
+            filter.status = req.query.status;
+        }
+        if (req.query.specialization) {
+            filter.specialization = { $regex: req.query.specialization, $options: "i" };
+        }
+
+        const data = await barberService.getAll(filter);
+        res.status(200).json({
+            success: true,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -11,8 +22,11 @@ exports.getAll = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
     try {
-        const data = await service.getById(req.params.id);
-        res.json({ success: true, data });
+        const data = await barberService.getById(req.params.id);
+        res.status(200).json({
+            success: true,
+            data
+        });
     } catch (error) {
         next(error);
     }
@@ -20,11 +34,10 @@ exports.getById = async (req, res, next) => {
 
 exports.create = async (req, res, next) => {
     try {
-        const data = await service.create(req.body);
-
+        const data = await barberService.create(req.body);
         res.status(201).json({
             success: true,
-            message: "Barber created successfully",
+            message: "Barber profile created successfully",
             data
         });
     } catch (error) {
@@ -34,14 +47,10 @@ exports.create = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
-        const data = await service.update(
-            req.params.id,
-            req.body
-        );
-
-        res.json({
+        const data = await barberService.update(req.params.id, req.body);
+        res.status(200).json({
             success: true,
-            message: "Barber updated successfully",
+            message: "Barber profile updated successfully",
             data
         });
     } catch (error) {
@@ -51,11 +60,11 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
-        await service.delete(req.params.id);
-
-        res.json({
+        const result = await barberService.delete(req.params.id);
+        res.status(200).json({
             success: true,
-            message: "Barber deleted successfully"
+            message: result.message,
+            data: result.barber
         });
     } catch (error) {
         next(error);

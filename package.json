@@ -1,17 +1,27 @@
 {
-  "name": "bewt_project",
+  "name": "salon-management-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Salon Management System RESTful API Backend - Darshan University BEWT (2501CS402)",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node utils/seeder.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "salon-management",
+    "express",
+    "mongodb",
+    "jwt",
+    "rest-api"
+  ],
+  "author": "Nikhil Rakhasiya",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "joi": "^18.2.3",

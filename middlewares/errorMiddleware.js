@@ -1,36 +1,42 @@
 exports.errorHandler = (err, req, res, next) => {
+    let statusCode = err.statusCode || 500;
+    let message = err.message || "Internal Server Error";
+    let errors = undefined;
 
-    console.error(err);
-
+    // Mongoose validation error
     if (err.name === "ValidationError") {
-
-        return res.status(400).json({
-            success: false,
-            message: "Validation error",
-            errors: Object.values(err.errors).map(
-                error => error.message
-            )
-        });
+        statusCode = 400;
+        message = "Validation Error";
+        errors = Object.values(err.errors).map((val) => val.message);
     }
 
+    // Mongoose bad ObjectId / CastError
     if (err.name === "CastError") {
-
-        return res.status(400).json({
-            success: false,
-            message: "Invalid ID"
-        });
+        statusCode = 400;
+        message = `Invalid resource identifier: ${err.value}`;
     }
 
+    // Mongoose duplicate key error (code 11000)
     if (err.code === 11000) {
-
-        return res.status(409).json({
-            success: false,
-            message: "Duplicate value already exists"
-        });
+        statusCode = 409;
+        const field = Object.keys(err.keyValue || {})[0] || "field";
+        message = `Duplicate value entered for ${field}. It must be unique.`;
     }
 
-    res.status(500).json({
+    // JWT Error handling
+    if (err.name === "JsonWebTokenError") {
+        statusCode = 401;
+        message = "Invalid authorization token";
+    }
+
+    if (err.name === "TokenExpiredError") {
+        statusCode = 401;
+        message = "Authorization token expired";
+    }
+
+    res.status(statusCode).json({
         success: false,
-        message: err.message || "Internal Server Error"
+        message,
+        ...(errors ? { errors } : {})
     });
 };

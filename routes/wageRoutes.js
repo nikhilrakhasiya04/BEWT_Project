@@ -1,42 +1,20 @@
 const express = require("express");
 const controller = require("../controllers/wageController");
 const { authenticate, authorize } = require("../middlewares/authMiddleware");
+const { validateWageCalculation } = require("../validations/validation");
 
 const router = express.Router();
 
-router.get(
-    "/",
-    authenticate,
-    authorize("Administrator"),
-    controller.getAll
-);
+router.use(authenticate);
 
-router.get(
-    "/:id",
-    authenticate,
-    authorize("Administrator"),
-    controller.getById
-);
+// View Payroll Statements & Dynamic Calculation (Admin Full, Barber View Personal)
+router.get("/", authorize("Administrator", "Barber"), controller.getAll);
+router.get("/calculate", authorize("Administrator", "Barber"), controller.calculateStatement);
+router.get("/:id", authorize("Administrator", "Barber"), controller.getById);
 
-router.post(
-    "/",
-    authenticate,
-    authorize("Administrator"),
-    controller.create
-);
-
-router.put(
-    "/:id",
-    authenticate,
-    authorize("Administrator"),
-    controller.update
-);
-
-router.delete(
-    "/:id",
-    authenticate,
-    authorize("Administrator"),
-    controller.delete
-);
+// Finalize and Log Financial Payout Ledger (Administrator Only)
+router.post("/", authorize("Administrator"), validateWageCalculation, controller.create);
+router.put("/:id", authorize("Administrator"), controller.update);
+router.delete("/:id", authorize("Administrator"), controller.delete);
 
 module.exports = router;

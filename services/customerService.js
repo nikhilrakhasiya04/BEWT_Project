@@ -1,38 +1,49 @@
-const repository = require("../repositories/customerRepository");
+const customerRepository = require("../repositories/customerRepository");
+const appointmentRepository = require("../repositories/appointmentRepository");
 
-exports.getAll = () => repository.findAll();
-
-exports.getById = async (id) => {
-
-    const customer = await repository.findById(id);
-
-    if (!customer) {
-        throw new Error("Customer not found");
-    }
-
-    return customer;
+exports.getAll = (queryParams) => {
+    return customerRepository.findAll(queryParams);
 };
 
-exports.create = (data) => repository.create(data);
-
-exports.update = async (id, data) => {
-
-    const customer = await repository.update(id, data);
-
+exports.getById = async (id) => {
+    const customer = await customerRepository.findById(id);
     if (!customer) {
-        throw new Error("Customer not found");
+        const error = new Error("Customer not found");
+        error.statusCode = 404;
+        throw error;
     }
 
+    // Historical visit logs (appointments)
+    const visitLogs = await appointmentRepository.findByCustomer(id);
+
+    return {
+        customer,
+        total_visits: visitLogs.length,
+        completed_visits: visitLogs.filter((v) => v.status === "Completed").length,
+        visit_history: visitLogs
+    };
+};
+
+exports.create = async (data) => {
+    return customerRepository.create(data);
+};
+
+exports.update = async (id, data) => {
+    const customer = await customerRepository.update(id, data);
+    if (!customer) {
+        const error = new Error("Customer not found");
+        error.statusCode = 404;
+        throw error;
+    }
     return customer;
 };
 
 exports.delete = async (id) => {
-
-    const customer = await repository.remove(id);
-
+    const customer = await customerRepository.remove(id);
     if (!customer) {
-        throw new Error("Customer not found");
+        const error = new Error("Customer not found");
+        error.statusCode = 404;
+        throw error;
     }
-
     return customer;
 };

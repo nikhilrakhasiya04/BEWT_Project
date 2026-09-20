@@ -1,10 +1,27 @@
 const WageRecord = require("../models/Wage");
 
-exports.findAll = () =>
-    WageRecord.find().populate("barber_id");
+exports.findAll = (filter = {}) =>
+    WageRecord.find(filter)
+        .populate({
+            path: "barber_id",
+            populate: { path: "user_id", select: "name email phone" }
+        })
+        .sort({ month: -1, created_at: -1 });
 
 exports.findById = (id) =>
-    WageRecord.findById(id).populate("barber_id");
+    WageRecord.findById(id).populate({
+        path: "barber_id",
+        populate: { path: "user_id", select: "name email phone" }
+    });
+
+exports.findByBarberAndMonth = (barberId, month) =>
+    WageRecord.findOne({
+        barber_id: barberId,
+        month: month
+    }).populate({
+        path: "barber_id",
+        populate: { path: "user_id", select: "name email phone" }
+    });
 
 exports.create = (data) =>
     WageRecord.create(data);
@@ -14,10 +31,13 @@ exports.update = (id, data) =>
         id,
         data,
         {
-            new: true,
+            returnDocument: "after",
             runValidators: true
         }
-    ).populate("barber_id");
+    ).populate({
+        path: "barber_id",
+        populate: { path: "user_id", select: "name email phone" }
+    });
 
 exports.remove = (id) =>
     WageRecord.findByIdAndDelete(id);

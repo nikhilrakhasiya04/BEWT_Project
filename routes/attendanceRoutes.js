@@ -1,17 +1,23 @@
 const express = require("express");
 const controller = require("../controllers/attendanceController");
-const { authenticate } = require("../middlewares/authMiddleware");
+const { authenticate, authorize } = require("../middlewares/authMiddleware");
+const { validateCheckIn, validateCheckOut } = require("../validations/validation");
 
 const router = express.Router();
 
-router.get("/", authenticate, controller.getAll);
+router.use(authenticate);
 
-router.get("/:id", authenticate, controller.getById);
+// Historical matrix view & individual entry (Admin Full, Barber Personal)
+router.get("/", authorize("Administrator", "Barber"), controller.getAll);
+router.get("/:id", authorize("Administrator", "Barber"), controller.getById);
 
-router.post("/", authenticate, controller.create);
+// Time punch actions (Barber Mark Personal / Administrator)
+router.post("/checkin", authorize("Administrator", "Barber"), validateCheckIn, controller.checkIn);
+router.post("/checkout", authorize("Administrator", "Barber"), validateCheckOut, controller.checkOut);
 
-router.put("/:id", authenticate, controller.update);
-
-router.delete("/:id", authenticate, controller.delete);
+// Admin-only management routes
+router.post("/", authorize("Administrator"), validateCheckIn, controller.create);
+router.put("/:id", authorize("Administrator"), controller.update);
+router.delete("/:id", authorize("Administrator"), controller.delete);
 
 module.exports = router;

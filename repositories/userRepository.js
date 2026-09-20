@@ -1,15 +1,23 @@
 const User = require("../models/User");
 
-exports.findAll = () => {
-    return User.find().select("-password");
+exports.findAll = (filter = {}) => {
+    return User.find(filter).select("-password").sort({ created_at: -1 });
 };
 
 exports.findById = (id) => {
     return User.findById(id).select("-password");
 };
 
+exports.findByIdWithPassword = (id) => {
+    return User.findById(id).select("+password");
+};
+
 exports.findByEmail = (email) => {
     return User.findOne({ email });
+};
+
+exports.findByEmailWithPassword = (email) => {
+    return User.findOne({ email }).select("+password");
 };
 
 exports.create = (data) => {
@@ -21,7 +29,7 @@ exports.update = (id, data) => {
         id,
         data,
         {
-            new: true,
+            returnDocument: "after",
             runValidators: true
         }
     ).select("-password");
