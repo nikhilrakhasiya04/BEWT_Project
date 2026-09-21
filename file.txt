@@ -1,13 +1,55 @@
-//register
+==================================================
+        SALON MANAGEMENT SYSTEM - API TEST DATA
+==================================================
+
+1. REGISTER USER DATA:
+--------------------------------------------------
 {
-    "name": "Nikhil Rakhasiya",
-    "email": "nikhil.rakhasiya@gmail.com",
-    "password": "nikhil123",
-    "role": "Administrator"
+  "name": "Nikhil Patel",
+  "email": "nikhil@example.com",
+  "password": "Password123!",
+  "role": "Barber"
 }
 
-//login
+
+2. LOGIN USER DATA (For above registered user):
+--------------------------------------------------
 {
-    "email": "nikhil.rakhasiya@gmail.com",
-    "password": "nikhil123"
+  "email": "nikhil@example.com",
+  "password": "Password123!"
 }
+
+
+3. READY-MADE (SEEDED) LOGIN ACCOUNTS:
+--------------------------------------------------
+Administrator:
+{
+  "email": "admin@salon.com",
+  "password": "admin123"
+}
+
+Receptionist:
+{
+  "email": "reception@salon.com",
+  "password": "reception123"
+}
+
+Barber (John):
+{
+  "email": "john@salon.com",
+  "password": "barber123"
+}
+
+Barber (Alex):
+{
+  "email": "alex@salon.com",
+  "password": "barber123"
+}
+
+
+4. QUICK ENDPOINT REFERENCES:
+--------------------------------------------------
+- Base URL: http://localhost:5000/api
+- Register: POST /api/auth/register
+- Login:    POST /api/auth/login
+- Logout:   POST /api/auth/logout (Requires: Header "Authorization: Bearer <TOKEN>")
