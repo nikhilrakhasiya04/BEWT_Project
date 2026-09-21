@@ -53,3 +53,39 @@ Barber (Alex):
 - Register: POST /api/auth/register
 - Login:    POST /api/auth/login
 - Logout:   POST /api/auth/logout (Requires: Header "Authorization: Bearer <TOKEN>")
+
+
+==================================================
+   SHORT EXPLANATION FOR FACULTY / SIR (VIVA NOTES)
+==================================================
+
+1. TokenBlacklist (Table/Collection):
+--------------------------------------------------
+• Purpose: JWT Token Invalidation upon User Logout.
+• How it works: JWT stateless hota hai, isliye jab user logout karta hai tab uska token is collection me add ho jata hai. Auth middleware har API request par check karta hai ki token blacklist me to nahi hai.
+• Auto Cleanup: MongoDB ka TTL (Time To Live) index use kiya hai jisse token expire hote hi database se auto-delete ho jata hai.
+
+2. SlotException (Table/Collection):
+--------------------------------------------------
+• Purpose: Dynamic Slot Blocking for Barber Leaves and Salon Holidays.
+• How it works: Jab koi barber leave par ho ya salon me holiday/maintenance break ho, tab ek exception add hota hai.
+• Impact: Customer ko appointment booking ke waqt wahi slots dikhte hain jo genuinely available hain; leave/break wale slots automatically block/hide ho jate hain.
+
+3. Attendance (Table/Collection):
+--------------------------------------------------
+• Purpose: Barber Check-In / Check-Out Tracking.
+• How it works: Barber daily time card par punch-in aur punch-out karta hai, jisse unke total daily working hours calculate hote hain.
+
+4. Wage & Commission Business Logic:
+--------------------------------------------------
+• Purpose: Automatic Monthly Payroll & Performance Commission calculation.
+• Formula:
+  - Stylist Commission = Service Price * Commission % (e.g. ₹300 * 40% = ₹120)
+  - Salon Retained Share = Service Price - Stylist Commission (₹300 - ₹120 = ₹180)
+
+5. Corporate Reports & Analytics:
+--------------------------------------------------
+• Daily & Monthly Revenue
+• Top High-Margin Services
+• Barber Performance & Commissions
+• Customer Return & Retention Rate
